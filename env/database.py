@@ -90,6 +90,9 @@ def database_config():
     create_db()
     create_table()
 
+def random_name():
+    return randomdbName
+
 
 
 
