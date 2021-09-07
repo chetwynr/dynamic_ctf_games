@@ -77,7 +77,7 @@ def database_config():
                     randomtbName = random.sample(wordlist, tables_count)
                     tbName = str(randomtbName[i])
                     cursor = conn.cursor()
-                    cursor.execute("CREATE TABLE " +tbName + "(hello INTEGER PRIMARY KEY, world TEXT UNIQUE)")
+                    cursor.execute("CREATE TABLE " +tbName + "(user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, password TEXT NOT NULL)")
 
                     print(tbName)
                     i+=1
@@ -86,6 +86,8 @@ def database_config():
                 print(e)
         else:
             random_content = False
+
+
 
     create_db()
     create_table()
