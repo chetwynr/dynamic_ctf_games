@@ -1,20 +1,25 @@
+import os
 import sqlite3
 from sqlite3 import Error
 import yaml
 from yaml.loader import SafeLoader
 import random
 
-#print(os.getcwd())
+### Get configuration file
+dirname = os.path.dirname(os.path.dirname(__file__))
+config_path = os.path.join(dirname, 'config\env.yaml')
 
-config_path = "C:\\Users\\roberac\\PycharmProjects\\dynamic_ctf_games\\config\\env.yaml"
-wordlist_path = "C:\\Users\\roberac\\PycharmProjects\\dynamic_ctf_games\\env\\wordlists\\engWord"
+
+### Get wordlist
+dirname = os.path.dirname(__file__)
+wordlist_path = os.path.join(dirname, 'wordlists\engword')
+
+
 wordlistFile = open(wordlist_path, 'r')
 wordlist = []
 for word in wordlistFile:
     word = word.strip()
     wordlist.append(word)
-
-# Create wordlist set for randomised naming
 
 
 ### Read YAML Database Configuration
