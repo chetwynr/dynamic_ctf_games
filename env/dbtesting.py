@@ -1,4 +1,5 @@
 import sqlite3
+import os
 
 '''
 
@@ -16,12 +17,15 @@ def lookup_data():
     cursor = con.cursor()
 
     # Input our SQL lookup commands here
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    #cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
     cursor.execute("SELECT * FROM heavy")
 
 
     # Use this function to printout all the data discovered
-    print(cursor.fetchall())
+    #print(cursor.fetchall())
+
+    for item in cursor:
+        print(item)
 
 
     con.close()
@@ -45,5 +49,19 @@ def input_data():
 
     con.close()
 
-input_data()
+def show_tables():
+    con = sqlite3.connect('sister.db')
+    cursor = con.cursor()
+
+
+    # Input our test data here
+    cursor.execute("select name from sqlite_master where type='table' and name NOT LIKE 'sqlite_%'")
+    print(cursor.fetchall())
+
+    con.close()
+
+
+#input_data()
 lookup_data()
+
+#show_tables()

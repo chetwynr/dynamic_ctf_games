@@ -5,15 +5,9 @@
     <title>Index</title>
 </head>
 <body>
-    <h1>Welcome</h1>
+    <h1>Listing All</h1>
+    <p>{{database}}</p>
     <a href="{{ url_for('login') }}">For login go here</a>
-
-
-    <table>
-        {% for item in db_data %}
-            <h5>{{item}}</h5>
-        {% endfor %}
-    </table>
 
 </body>
 </html>

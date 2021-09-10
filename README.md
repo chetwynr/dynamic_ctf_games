@@ -2,6 +2,9 @@
 
 Development of dynamic CTF environments for SQL injection attacks - For use with RL SQL agents and CTF training
 
+####Check requirements.txt for external libraries 
+
+
 ### Currently Implemented:
 
 * YAML config syntax: Work in progress 
