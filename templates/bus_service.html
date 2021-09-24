@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Hacker Bus</title>
+</head>
+<body>
+    <h1>Welcome to the fastest bus service in the world</h1>
+    <br><br><br>
+    <div id="form-holder">
+        <h3>Here are a list of times: </h3>
+
+        {{database}}
+
+        <h3>Use our interactive form to check the scheduling</h3>
+
+        <form action="/service" method="post">
+            <p>
+                {{form.bus.label}} {{form.bus(size=5)}}
+                {{form.city.label}} {{form.city(size=20)}}
+                {{form.time.label}} {{form.time(size=20)}}
+                {{form.search()}}
+            </p>
+        </form>
+
+    </div>
+</body>
+</html>

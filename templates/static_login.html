@@ -8,15 +8,17 @@
 
     <body>
         <h1>Sign Up</h1>
+        <p>Welcome: {{greeting}}</p>
+        <p>{{database}}</p>
         <form action ="/list" method = "post">
             <p>
                 {{form.id.label}} {{form.id(size=30)}} <br>
             </p>
             <p>
-                {{form.username.label}} {{form.username(size=30)}} <br>
+                {{form.uname.label}} {{form.uname(size=30)}} <br>
             </p>
             <p>
-                {{form.password.label}} {{form.password(size=30)}} <br>
+                {{form.passwd.label}} {{form.passwd(size=30)}} <br>
             </p>
             <p>
                 {{form.submit()}}

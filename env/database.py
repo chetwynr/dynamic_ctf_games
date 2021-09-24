@@ -2,6 +2,7 @@ import os
 import sqlite3
 from sqlite3 import Error
 import yaml
+import csv
 from yaml.loader import SafeLoader
 import random
 
@@ -13,6 +14,8 @@ config_path = os.path.join(dirname, 'config\env.yaml')
 ### Get wordlist
 dirname = os.path.dirname(__file__)
 wordlist_path = os.path.join(dirname, 'wordlists\engword')
+account_path = os.path.join(dirname, 'wordlists\city_service.csv')
+service_path = os.path.join(dirname, 'wordlists\service.txt')
 
 
 wordlistFile = open(wordlist_path, 'r')
@@ -40,6 +43,9 @@ def database_config():
 
     def create_db():
         global randomdbName
+        global staticdbName
+
+        staticdbName = "busservice.db"
 
         conn = None
 
@@ -50,9 +56,7 @@ def database_config():
                 randomdbName = str(randomdbName+".db")
 
 
-                #conn = sqlite3.connect(str(dbName)[1:-1][1:-1] + ".db")
                 conn = sqlite3.connect(randomdbName)
-                print(sqlite3.version)
 
                 return randomdbName
 
@@ -62,10 +66,18 @@ def database_config():
                 if conn:
                     conn.close()
 
+        ### Configurations for static database
         else:
-            random_content = False
+            try:
+                conn = sqlite3.connect(staticdbName)
 
-    #randomdbName = create_db()
+            except Error as e:
+                print(e)
+            finally:
+                if conn:
+                    conn.close()
+
+
 
     def create_table():
 
@@ -75,22 +87,68 @@ def database_config():
         if int(database_config["database"]["randomised_content"]) == 1:
             try:
 
+                randomtbName = random.sample(wordlist, tables_count)
 
                 while i < tables_count:
-                    print(i)
+
                     conn = sqlite3.connect(randomdbName)
-                    randomtbName = random.sample(wordlist, tables_count)
                     tbName = str(randomtbName[i])
                     cursor = conn.cursor()
-                    cursor.execute("CREATE TABLE " +tbName + "(user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, password TEXT NOT NULL)")
 
-                    print(tbName)
+                    cursor.execute("CREATE TABLE {}(id TEXT PRIMARY KEY, username TEXT, password TEXT)".format(tbName))
+                    conn.commit()
+
+                    ### Insert demo account data for username/password login
+                    with open(account_path) as f:
+                        account_data = f.readlines()
+
+                        for account in account_data:
+                            input = account.split(",")
+
+                            conn = sqlite3.connect(randomdbName)
+                            cursor = conn.cursor()
+
+                            cursor.execute("INSERT INTO {} (id, username, password) VALUES ('{}','{}','{}')".format(tbName,input[0],input[1],input[2]))
+                            conn.commit()
+
                     i+=1
+                    conn.commit()
+
+                return randomtbName
 
             except Error as e:
                 print(e)
         else:
-            random_content = False
+            static_tableName = ["service","serviceAdmin"]
+            for entry in static_tableName:
+
+                tableName = str(entry)
+                conn = sqlite3.connect(staticdbName)
+                cursor = conn.cursor()
+
+                cursor.execute("CREATE TABLE {}(service TEXT PRIMARY KEY, city TEXT, time TEXT)".format(tableName))
+
+                with open(account_path) as f:
+                    account_data = f.readlines()
+
+                    for account in account_data:
+                        input = account.split(",")
+
+                        conn = sqlite3.connect(staticdbName)
+                        cursor = conn.cursor()
+
+                        cursor.execute(
+                            "INSERT INTO {} (service, city, time) VALUES ('{}','{}','{}')".format(tableName, input[0],
+                                                                                                     input[1],
+                                                                                                     input[2]))
+                        conn.commit()
+                conn.commit()
+
+
+
+
+
+
 
 
 
