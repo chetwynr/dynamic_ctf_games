@@ -141,5 +141,5 @@ if __name__ == "__main__":
 
     if security_config["security"]["security_level"] == 0:
         app.run(host=HOST,port=PORT,debug=True)
-    elif security_config["security"]["security_level"] == 1:
+    else:
         app.run(host=HOST, port=PORT, debug=False)
