@@ -122,25 +122,25 @@ def genDB():
     engine = create_engine(url) # URL formatting can be changed to MySQL, POSTGRS if needed
     if not database_exists(engine.url):
         create_database(engine.url)
-    print(database_exists(engine.url))
+    else:
+        pass
+
 
     # Export dataframe to database
     try:
         df_fake_date.to_sql('user', con=engine, index=False) # First 'entry' will be a table name e.g. 'user' = table name
     except:
         pass
+
+
     try:
         df_fake_date.to_sql('account', con=engine, index=False)
     except:
         pass
 
-
-def genFLAG():
-    pass
-
 def test_connection():
 
-    con = sqlite3.connect("test.db")
+    con = sqlite3.connect("testdb.db")
     cursor = con.cursor()
 
     select = "SELECT first_name FROM user UNION ALL SELECT last_name FROM account"
@@ -191,7 +191,7 @@ def setup_site():
 
             sql = query + "'{}'".format(interaction2)
 
-            con = sqlite3.connect("test.db")
+            con = sqlite3.connect("testdb.db")
             cursor = con.cursor()
 
 
