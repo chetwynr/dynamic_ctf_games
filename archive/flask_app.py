@@ -1,13 +1,16 @@
 # A deliberately vulnerable - non secure Dynamic CTF environment
 
 # TODO: Refreshing function for HTML - SQL content
+# TODO: Change Testing to random URL forwarder for new episode
+# TODO: Present demo semi-realistic interactive sites
+# TODO: make a storage list for static and random websites so new_episode can render them
 
 import os
 import random
 import sys
 import yaml
 from flask import Flask, render_template, url_for, redirect, request, g
-from env.forms import Login, InteractiveForm, newEpisode
+from env.forms import *
 import sqlite3
 
 app = Flask(__name__)
@@ -15,8 +18,9 @@ HOST = '127.0.0.1'
 PORT = 5000
 
 dirname = os.path.dirname(__file__)
-config_path = os.path.join(dirname, 'config\env.yaml')
-templates_path = os.path.join(dirname, 'templates')
+config_path = os.path.join(dirname, '../config/env.yaml')
+templates_path = os.path.join(dirname, '../templates')
+templates = os.listdir(templates_path)
 
 ### Static database configuration
 account_db_path = os.path.join(dirname, 'env\\accounts.db')
@@ -25,6 +29,7 @@ test_db_path = os.path.join(dirname, 'env\\test.db')
 
 # Security key required for Flask-WTF. This can be anything
 app.config['SECRET_KEY'] = 'demo_ctf'
+
 
 def site_config():
     stream = open(config_path, 'r')
@@ -35,6 +40,8 @@ def site_config():
 ### Define bool logic here for configuring the site - based upon the content of the YAML file
 ### Define directories and subdirectories via app.route
 
+
+    ### Logic for static generated website content
     if "login" in app_config["interaction"]["form_type"]:
         if app_config["interaction"]["randomised_content"] == 0:
             try:
@@ -43,31 +50,19 @@ def site_config():
 
                     return render_template("index.html")
 
-                @app.route("/login", methods=["GET","POST"])
+                @app.route("/login", methods=["GET", "POST"])
                 def login():
 
                     form = Login()
 
                     return render_template("static_login.html", form=form)
 
-                @app.route("/testing", methods=["GET", "POST"])
-                def testing():
+                @app.route("/new_episode", methods=["GET", "POST"])
+                def NEW():
 
-                    form = newEpisode()
+                    new_template = random.choice(templates)
 
-                    templates = os.listdir(templates_path)
-
-
-                    check = request.form.get("newEpisode")
-
-                    try:
-                        if "Y" in check:
-                            new_template = random.choice(templates)
-                            return render_template(new_template, form=form)
-                        else:
-                            return render_template("testing.html", form=form)
-                    except:
-                        return render_template("testing.html", form=form)
+                    return render_template(new_template)
 
 
                 ### Example route for listing database contents
@@ -98,6 +93,7 @@ def site_config():
                     return "Generic Error - Needs refining"
 
 
+    ### Logic for randomised website content
     elif "interactive" in app_config["interaction"]["form_type"]:
         @app.route("/", methods=["GET", "POST"])
         def home():
