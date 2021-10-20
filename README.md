@@ -1,6 +1,6 @@
 # Dynamic CTF Game Generator - SQL
 
-Development of dynamic CTF environments for SQL injection attacks - For use with RL SQL agents and CTF training
+Development of dynamic CTF environments for SQL injection attacks - For use with Reinforcement Learning SQL agents, ethical hacking training and security testing.
 
 Only supports Python 3.x 
 <p>
@@ -15,8 +15,9 @@ python -3.x -m pip install -r requirements.txt
 x = version e.g. 3.1, 3.7
 </p>
 ### To start:
+<p>
 py dynamicENV.py
-
+</p>
 
 
 
