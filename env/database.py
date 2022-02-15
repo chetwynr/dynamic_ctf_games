@@ -83,17 +83,20 @@ def database_config():
 
         conn = None
         i = 0
+        string_index = 0
 
         if int(database_config["database"]["randomised_content"]) == 1:
             try:
 
                 randomtbName = random.sample(wordlist, tables_count)
+                randomColumnName = random.sample(wordlist, columns_count)
 
                 while i < tables_count:
 
                     conn = sqlite3.connect(randomdbName)
                     tbName = str(randomtbName[i])
                     cursor = conn.cursor()
+
 
                     cursor.execute("CREATE TABLE {}(id TEXT PRIMARY KEY, username TEXT, password TEXT)".format(tbName))
                     conn.commit()

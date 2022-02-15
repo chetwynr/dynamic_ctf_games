@@ -18,7 +18,7 @@ class InteractiveForm2(FlaskForm):
 
 class InteractiveForm(FlaskForm):
     p1 = StringField('Input')
-    p2 = StringField('Input_')
+    p2 = StringField('Input')
     submit = SubmitField('Submit')
 
 
