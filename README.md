@@ -1,23 +1,42 @@
 # Dynamic CTF Game Generator - SQL
 
-Development of dynamic CTF environments for SQL injection attacks - For use with RL SQL agents and CTF training
+Development of dynamic CTF environments for SQL injection attacks - For use with Reinforcement Learning SQL agents, ethical hacking training and security testing.
+<br>
 
-####Check requirements.txt for external libraries 
+<p>
+
+Only supports Python 3.x 
+  
+</p>
+
+<p>
+Developed and currently tested only on Windows environment
+</p>
+<p>
+</p>
+### Install Dependencies:
+
+python -3.x -m pip install -r requirements.txt
+<p>
+x = version e.g. 3.1, 3.7
+</p>
+### To start:
+<p>
+py dynamicENV.py
+</p>
 
 
-### Currently Implemented:
 
-* YAML config syntax: Work in progress 
-* Randomised DB name
-* Randomised Table content
-* Static web template - One implemented but more can be simply added
-* Routing
-* Debugging
+Directory needs tidying as there is a lot of redundant files!!
 
-### TODO:
-* Dynamic HTML
-* Database content generation
-* Real world website imitation - e.g. Common social media sites, web login sites
-* Connection to backend database
-* Security: Filtering, web application firewall, custom errors 
+<p>
+Collaborative research between University of Oslo[1] and Norwegian University of Science and Technology[2].
+</p>
+<br>
+For further work see: https://github.com/FMZennaro/CTFRL-Index
+<br>
+[1] https://www.mn.uio.no/ifi/english/research/groups/sec/ 
+<br>
+[2] https://www.ntnu.edu/iik
+
 
