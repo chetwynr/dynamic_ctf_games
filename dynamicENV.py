@@ -2,6 +2,7 @@ import os
 import sys
 import random
 import urllib.parse
+import traceback
 import yaml
 from flask import Flask, render_template, url_for, redirect, request, g
 from env.forms import Login, InteractiveForm, RandomForm
@@ -15,7 +16,7 @@ from sqlalchemy import Table, Column, Integer, String, MetaData
 from sqlalchemy_utils import database_exists, create_database
 from sqlalchemy import MetaData
 import pandas as pd
-from env.sqlQueries import booleanBased, unionBased, get_schema
+from env.sqlQueries import booleanBased, unionBased, get_schema, insert_flag, string_delimiter, comment_delimiter
 #from env.sqlQueries import get_schema
 import mysql.connector
 from mysql.connector import Error
@@ -64,6 +65,9 @@ def challenge_type(): # logic for choosing SQL Queries based on defined SQLi cha
     config = read_config()
 
     vulnerability_config = config[2]
+    sDelimiter = string_delimiter()
+    cDelimiter = comment_delimiter()
+
 
     if "boolean" in vulnerability_config["details"]["vulnerability_type"]:
         query = booleanBased()
@@ -71,11 +75,10 @@ def challenge_type(): # logic for choosing SQL Queries based on defined SQLi cha
     elif "union" in vulnerability_config["details"]["vulnerability_type"]:
         query = unionBased()
         #query = get_schema()
-    return query
+    return query, sDelimiter, cDelimiter
 
 
-challenge = challenge_type() # Assigned outside of function otherwise a new query is generated each time a POST request is made
-
+query, sdelimiter, cdelimiter = challenge_type() # Assigned outside of function otherwise a new query is generated each time a POST request is made
 
 
 def wordlists():    # random word(s) generation
@@ -201,7 +204,6 @@ def genDB(db_username, db_password, db_host, db_port): ### Database generation l
     else:
         pass
 
-
     # Export dataframe to database
     try:
         df_fake_date.to_sql('user', con=engine, index=False) # First 'entry' will be a table name e.g. 'user' = table name
@@ -212,6 +214,21 @@ def genDB(db_username, db_password, db_host, db_port): ### Database generation l
         df_fake_date.to_sql('account', con=engine, index=False) # First 'entry' will be a table name e.g. 'account' = table name
     except:
         pass
+
+    def flag_input():
+        flag1, flag2 = insert_flag()
+        print(flag1)
+        print(flag2)
+        con = sqlite3.connect(filename)
+        cursor = con.cursor()
+        cursor.execute(flag1)
+        con.commit()
+        con = sqlite3.connect(filename)
+        cursor = con.cursor()
+        cursor.execute(flag2)
+        con.commit()
+
+    flag_input()
 
 
 def test_connection(): ### Currently not in use, exists for DB testing
@@ -258,15 +275,20 @@ def setup_site():
         def index():
 
             form = InteractiveForm()
-            query = challenge
+            #query, sDelimiter, cDelimiter  = challenge
+            sDelimiter = sdelimiter
+            Query = query
+            cDelimiter = cdelimiter
 
             interaction1 = request.form.get('p1')
             interaction2 = request.form.get('p2')
 
             interaction_param = [interaction1, interaction2]
 
-            sql = query + "'{}'".format(interaction2)
+            #sql = Query + "'{}'".format(interaction2)
 
+
+            sql = Query + "'{}'".format(interaction2)
             print(sql)
 
             ### TODO make seperate conns for each db type
@@ -275,7 +297,15 @@ def setup_site():
             con = sqlite3.connect("testing.db")
             cursor = con.cursor()
 
-            cursor.execute(sql)
+            ## TODO include: include SQL
+            try:
+                cursor.execute(sql)
+            except sqlite3.Error as er:
+                print('SQLite error: %s' % (' '.join(er.args)))
+                print("Exception class is: ", er.__class__)
+                print('SQLite traceback: ')
+                exc_type, exc_value, exc_tb = sys.exc_info()
+                print(traceback.format_exception(exc_type, exc_value, exc_tb))
             # cursor.execute(query)
 
             ### con for mysql
@@ -285,7 +315,7 @@ def setup_site():
             db_data = cursor.fetchall()
 
 
-            return render_template("random_index.html", form=form, returned = db_data, random_message=query) # random_content=data
+            return render_template("random_index.html", form=form, returned = db_data, random_message=sql) # random_content=data
 
         def restart():
             @app.route("/restart", methods=["GET", "POST"])
@@ -329,7 +359,7 @@ if __name__ == "__main__":
         )
     #test_connection()
 
-    app.run(host=HOST, port=PORT,debug = False)
+    app.run(host=HOST, port=PORT,debug = True)
 
     #app.run(host=HOST, port=PORT) ### TODO Disable 'debug = true' in production as it runs Flask twice causing db issues
     #debug=True
